@@ -20,7 +20,47 @@ Current capabilities:
 - explicit ACTIVE_GOAL hot-state recovery semantics;
 - reproducible paired benchmark infrastructure.
 
+### 2026-09-23 adversarial validation
+
+A maintainer-run adversarial campaign tested the published v0.1.2 package across context loss, agent replacement, interruption recovery, long external waits, single-goal stress, independent projects, cross-project references, stale state, false completion, malformed state, Git/worktree conditions and minimal-project overhead.
+
+No reproducible core protocol semantic failure was demonstrated in the tested scenarios.
+
+The campaign instead identified implementation and documentation weaknesses, especially:
+
+- CLI parsing/validation of real-world PPGP files;
+- malformed-state diagnostics;
+- repository-root resolution;
+- branch/ref visibility of ACTIVE_GOAL state;
+- a small set of documentation clarifications.
+
+See [ADVERSARIAL_VALIDATION.md](./ADVERSARIAL_VALIDATION.md) for scope, limitations and findings.
+
+This result is not a universality or superiority claim. It is a regression baseline for future changes.
+
+## Next candidate: v0.1.3 hardening
+
+v0.1.3 is the next planned release candidate. It is **not yet the current release**.
+
+The intended scope is to harden the v0.1.2 implementation without changing its core continuity model:
+
+- tolerant, explicit CLI parsing;
+- warnings for malformed or contradictory state;
+- Git top-level repository resolution;
+- branch visibility diagnostics in `doctor`;
+- safer overwrite/force behavior;
+- documentation clarifications;
+- regression tests derived from adversarial fixtures.
+
+The release becomes official only after implementation, verification, version-consistency checks, tag/release creation and package publication.
+
 ## Next priorities
+
+### Harden before extending
+
+Prefer fixing demonstrated implementation or documentation failures over adding new protocol primitives.
+
+A new core concept should require reproducible evidence that the existing v0.1.x model cannot safely express the workflow.
 
 ### Gather independent evidence
 
@@ -41,6 +81,12 @@ Refine the minimum requirements for claiming PPGP compatibility using observed i
 ### Improve packaging
 
 Keep installation simple across Agent Skills-compatible clients without making the portable core dependent on one vendor.
+
+## Research branches and proposals
+
+Richer coordination models, including the existing v0.2.0 concurrency proposal, remain research material until a reproducible core limitation demonstrates the need for them.
+
+The 2026-09-23 adversarial validation did not establish such a requirement.
 
 ## Not planned as core requirements
 
