@@ -177,7 +177,9 @@ ppgp distill
 ppgp close
 ```
 
-The CLI currently implements deterministic helpers for `init`, `doctor`, `goal`, `status`, `handoff`, `skill-path`, and `install-skill`.
+The CLI currently implements deterministic helpers for `init`, `doctor`, `goal`, `status`, `handoff`, `skill-path`, and `install-skill`. `distill` and `close` remain agent-performed protocol operations: they require judgement about what is durable and whether the Definition of Done is verified, which a deterministic helper cannot supply.
+
+The CLI resolves the repository root from `--root`, else the Git top-level of the working directory, else the working directory. It reads ACTIVE_GOAL fields written as `## GOAL` headers (any level), `**GOAL**` bold lines or `GOAL:` key lines, reports unrecognized sections instead of dropping them, and exits `0` for valid state, `2` when GOAL or NEXT_EXECUTABLE_ACTION cannot be found, and `1` for malformed or missing state. `doctor` reports the current branch and working-tree state and, when no ACTIVE_GOAL is checked out, lists other refs that carry one without switching branches. `goal --force` preserves the previous file as a timestamped `.bak`.
 
 These are protocol operations, not assumptions about a vendor-specific slash-command system.
 

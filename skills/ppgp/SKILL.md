@@ -151,6 +151,8 @@ N:<next action>
 
 Do not dump the conversation transcript.
 
+The packet supplements ACTIVE_GOAL; it never replaces it. The receiving agent needs the repository, the current ACTIVE_GOAL and the packet. Do not expand the packet into a context dump; update ACTIVE_GOAL instead.
+
 ### `ppgp distill`
 
 At the end of a goal or after major state accumulation:
@@ -185,6 +187,22 @@ Close only when the synchronous Definition of Done is verified.
 9. Report CLOSED + VERIFIED, or the smallest genuine remaining authority/dependency blocker.
 
 Do not wait for asynchronous external observations unless Definition of Done explicitly requires them.
+
+## Writing ACTIVE_GOAL so tools can read it
+
+Name fields as `## GOAL` style headers (any level), `**GOAL**` bold lines, or `GOAL:` upper-case key lines. Case, spacing and hyphens do not matter; extra sections are kept and reported. GOAL and NEXT_EXECUTABLE_ACTION are the minimum for a recoverable file. Prefer one substantial end-to-end goal over a trivial task; put sub-steps in DEFINITION_OF_DONE, COMPLETED and REMAINING.
+
+## Parking deferred work
+
+Keep one ACTIVE_GOAL. To defer a goal without closing it: bring ACTIVE_GOAL to verified truth, record the goal under ROADMAP as deferred with a resume condition and a pointer to its preserved state (last commit or a dated doc), then replace ACTIVE_GOAL. On resume, re-instantiate and re-verify.
+
+## Blocker scope
+
+State the smallest true scope in BLOCKERS ("Step A only: ...; steps B and C are not blocked") and keep NEXT_EXECUTABLE_ACTION on safe work. Continue independent work before escalating.
+
+## Goal state across branches
+
+ACTIVE_GOAL is read from the checked-out ref. If it lives on a topic branch, name that branch in ROADMAP on the integration branch. `ppgp doctor` lists other refs carrying an ACTIVE_GOAL but never switches or merges.
 
 ## Human escalation
 

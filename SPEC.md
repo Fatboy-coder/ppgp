@@ -33,6 +33,17 @@ Current project direction, completed goals, future goals, dependencies and defer
 
 It SHOULD describe state and direction, not preserve a full execution diary.
 
+#### Parking deferred work
+
+PPGP keeps exactly one ACTIVE_GOAL. When a substantial goal must yield to more urgent work without being closed or abandoned, park it instead of keeping two active goals:
+
+1. bring the current ACTIVE_GOAL to verified truth (VERIFIED_CURRENT_STATE, COMPLETED, REMAINING, BLOCKERS, NEXT_EXECUTABLE_ACTION);
+2. record it under ROADMAP as deferred work with a one-line resume condition and a reference to where its full state is preserved (the last commit that contained it, or a dated file in ordinary project documentation);
+3. remove or replace ACTIVE_GOAL for the new goal;
+4. when resuming, re-instantiate ACTIVE_GOAL from the preserved state and re-verify VERIFIED_CURRENT_STATE before continuing.
+
+A parked goal is neither active nor closed. ROADMAP holds the pointer, not the diary. This convention needs no registry and preserves one ACTIVE_GOAL, low work-in-progress, explicit deferred work and deterministic recovery.
+
 ### 3.3 MEMORY
 
 Durable facts that future agents would otherwise need to rediscover.
@@ -77,6 +88,20 @@ ACTIVE_GOAL MUST NOT become the permanent chronological history.
 
 ACTIVE_GOAL MUST be removed after successful closure and distillation.
 
+#### Machine-readable shape
+
+ACTIVE_GOAL is written for humans and agents first. The reference CLI recognizes a field when its name appears as:
+
+```text
+a Markdown header at any level      ## GOAL          ### Definition of Done
+a bold-only line                    **GOAL**
+an upper-case key starting a line   GOAL: text       FROZEN_DECISIONS:
+```
+
+Names are matched case-insensitively; spaces and hyphens are treated as underscores. A small alias set is accepted (`CURRENT_PHASE`, `DOD`, `NEXT`/`NEXT_ACTION`, `AUTHORITY`, `EVIDENCE`, and any header containing `NEXT`). Sections with other names are retained and reported, never silently discarded. If a field appears twice, the first occurrence is used and a warning is emitted.
+
+GOAL and NEXT_EXECUTABLE_ACTION are required for a file to be reported as fully recoverable. Other missing fields produce warnings. A tool SHOULD distinguish valid, partially recoverable, malformed and missing state, and MUST NOT report unreadable state as healthy. The reference CLI exits 0 for valid state (warnings allowed), 2 for partial state and 1 for malformed or missing state.
+
 ### 3.5 GIT / FORENSIC HISTORY
 
 Git or the repository's equivalent history is the forensic record of what actually changed.
@@ -90,6 +115,14 @@ A substantial PPGP goal follows:
 ```text
 THINK -> FREEZE -> EXECUTE -> HARDEN -> SHIP -> DISTILL -> CLOSED
 ```
+
+### Goal granularity
+
+A substantial PPGP goal SHOULD describe a meaningful end-to-end outcome rather than a single implementation step. Prefer "deliver production-ready artifact chaining with verified behavior" over "change function X". Do not make the goal so large that its Definition of Done becomes vague. A useful heuristic:
+
+> the largest independently meaningful end-to-end outcome that remains objectively verifiable and safely pursuable by the agent.
+
+This is guidance, not a normative field. Sub-steps belong in DEFINITION_OF_DONE, COMPLETED and REMAINING, not in separate goals.
 
 ### THINK
 
@@ -161,6 +194,19 @@ A DELTA SHOULD update repository-visible hot state when the change would materia
 
 The loop repeats until the current phase exit condition is met.
 
+### Goal, loop, task and session
+
+These terms are already implicit in PPGP and are clarified here without adding fields or commands:
+
+```text
+GOAL     durable, meaningful, verifiable end-to-end outcome (ACTIVE_GOAL)
+LOOP     RETRIEVE -> ACT -> VERIFY -> DELTA, repeated while pursuing the goal
+TASK     disposable implementation decomposition chosen during execution
+SESSION  replaceable execution container (one conversation, one agent run)
+```
+
+The invariant is that the GOAL survives loops and sessions. A loop may stop because of context exhaustion, session replacement, temporary interruption, a budget boundary or a legitimate authority blocker without destroying the durable goal. Tasks are recorded only insofar as COMPLETED, REMAINING and NEXT_EXECUTABLE_ACTION need them for recovery.
+
 ## 6. Boot and recovery
 
 A fresh agent SHOULD start from a minimal boot packet:
@@ -187,6 +233,12 @@ A recovery sequence SHOULD inspect, as relevant:
 If ACTIVE_GOAL says the strategy is frozen, recovery SHOULD resume execution rather than restart THINK by default.
 
 Abrupt interruption before DISTILL MUST NOT by itself be treated as loss of the active goal if current repository-visible hot state exists.
+
+### Visibility across refs
+
+ACTIVE_GOAL is discovered on the checked-out ref. Goal state committed only on another branch is invisible from the integration branch, and a fresh agent booting there may wrongly conclude that no goal is active.
+
+When a goal's ACTIVE_GOAL lives on a topic branch, the integration branch's ROADMAP SHOULD name that branch. A Git-aware tool MAY list other refs that carry an ACTIVE_GOAL, but MUST NOT switch branches, merge, or assume that such a file is current. The agent verifies currency before treating it as the active goal.
 
 ## 7. Evidence precedence
 
@@ -237,6 +289,20 @@ Required information or resource is genuinely unavailable and no safe autonomous
 Action: escalate only after autonomous alternatives are exhausted.
 
 Agents MUST NOT promote routine Type A decisions to Type C solely to avoid responsibility.
+
+### Blocker scope
+
+A blocker applies to the smallest true scope, not automatically to the whole goal. State the scope in prose inside BLOCKERS and keep REMAINING and NEXT_EXECUTABLE_ACTION pointing at work that is still safe:
+
+```text
+BLOCKERS
+- Step A only: Type C authority. Owner must provision the provider key. Steps B and C are NOT blocked.
+
+NEXT_EXECUTABLE_ACTION
+- Step B: port templates/welcome.html to the adapter and add a snapshot test.
+```
+
+An agent SHOULD continue independent safe work before escalating a scoped blocker. No additional structure is required.
 
 ## 9. Human interruption policy
 
@@ -291,6 +357,8 @@ The exact encoding is not normative.
 The invariant is that the handoff remain unambiguous, portable, auditable and cheaper than replaying the conversation.
 
 Opaque model-specific gibberish is NOT required for PPGP conformance.
+
+A handoff packet is a compact transfer signal, not a replacement for repository-visible PPGP state. It deliberately omits WHY, DEFINITION_OF_DONE, INVARIANTS, REMAINING and HUMAN_AUTHORITY_REQUIRED. A receiving agent SHOULD normally have the repository, the current ACTIVE_GOAL and the packet; the packet alone is not sufficient for safe continuation. Do not expand the packet into a full context dump; update ACTIVE_GOAL instead.
 
 ## 12. Distillation and garbage collection
 

@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.1.3 - candidate
+
+Hardening release. Protocol semantics are unchanged from 0.1.2; the CLI and documentation are brought up to the model that the 2026-09-23 adversarial validation (`ADVERSARIAL_VALIDATION.md`) found sound.
+
+CLI:
+
+- tolerant ACTIVE_GOAL parser: fields are recognized as Markdown headers at any level, bold-only lines or upper-case `KEY:` lines, matched case-insensitively with a small alias set; unrecognized sections are retained and reported instead of dropped; the first of duplicate sections wins with a warning;
+- explicit state classification and exit codes: `0` valid (warnings on stderr), `2` partial (GOAL or NEXT_EXECUTABLE_ACTION missing), `1` malformed or missing; empty, unreadable or sectionless files no longer report healthy state;
+- diagnostics for missing sections, non-lifecycle PHASE values, `CLOSED` phase inside an existing ACTIVE_GOAL, `CLOSED` with non-empty REMAINING, and leftover scaffold placeholders; `doctor` surfaces the same findings;
+- repository root resolves from `--root`, else the Git top-level of the working directory, else the working directory, so nested invocation finds repository-level state; Git remains optional;
+- `doctor` prints branch, HEAD and working-tree change count and, when no ACTIVE_GOAL is checked out, lists other refs that carry one without switching or merging;
+- `goal --force` preserves the replaced file as a timestamped `.bak`.
+
+Documentation (clarifications only, no new normative fields):
+
+- machine-readable shape of ACTIVE_GOAL and CLI exit codes;
+- visibility of goal state across refs and the ROADMAP pointer convention;
+- handoff packet supplements, never replaces, repository state;
+- parking convention for deferred goals using ROADMAP;
+- blocker scope expressed in prose;
+- GOAL / LOOP / TASK / SESSION relationship and end-to-end goal granularity guidance;
+- `distill` and `close` stay agent-performed operations.
+
+Tests:
+
+- `test/hardening.test.js` with fixtures derived from the adversarial validation: happy path, realistic canonical/SCP-style/OCPDF-style files, implemented-not-deployed, observation window, scoped blocker, malformed and contradictory state, nested-directory invocation, branch visibility, forced replacement backup, minimal repository, skill install.
+
+This release was maintainer-tested and adversarially exercised under documented scenarios. It makes no universality, superiority or formal-verification claim.
+
 ## 0.1.2 - 2026-08-26
 
 Version-consistency and release-hardening patch.
