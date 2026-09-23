@@ -38,11 +38,11 @@ See [ADVERSARIAL_VALIDATION.md](./ADVERSARIAL_VALIDATION.md) for scope, limitati
 
 This result is not a universality or superiority claim. It is a regression baseline for future changes.
 
-## Next candidate: v0.1.3 hardening
+## v0.1.3 hardening candidate
 
-v0.1.3 is the next planned release candidate. It is **not yet the current release**.
+Implemented on branch `release/harden-0.1.3` and awaiting owner review. v0.1.2 remains the latest published package until the tag, GitHub Release and npm publication complete.
 
-The intended scope is to harden the v0.1.2 implementation without changing its core continuity model:
+Scope, as implemented, hardens the v0.1.2 implementation without changing its core continuity model:
 
 - tolerant, explicit CLI parsing;
 - warnings for malformed or contradictory state;

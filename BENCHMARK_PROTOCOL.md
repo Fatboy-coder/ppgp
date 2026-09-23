@@ -2,7 +2,7 @@
 
 Benchmark method version: 0.1  
 Status: Experimental / exploratory  
-Protocol under test: PPGP v0.1.2  
+Protocol under test: PPGP v0.1.3  
 Primary question: does repository-visible PPGP state improve recovery after an abrupt loss of conversational context?
 
 This document defines a reproducible paired A/B experiment. It is an evaluation protocol, not evidence that PPGP is effective.

@@ -119,7 +119,7 @@ PPGP exposes the open Agent Plugins format at repository root:
 plugin.json
 ```
 
-The manifest remains schema-safe and co-located with canonical `skills/ppgp/` content. A separate `.cursor-plugin/plugin.json` is intentionally not added in v0.1.2 because PPGP currently needs only skills and the portable Agent Plugin format covers the intended distribution surface.
+The manifest remains schema-safe and co-located with canonical `skills/ppgp/` content. A separate `.cursor-plugin/plugin.json` is intentionally not added in v0.1.3 because PPGP currently needs only skills and the portable Agent Plugin format covers the intended distribution surface.
 
 Cursor Marketplace publication is an external submission step and is not claimed as complete.
 
@@ -176,7 +176,7 @@ Purpose: zero-friction download of the installable Agent Skill archive.
 Current canonical asset:
 
 ```text
-ppgp-v0.1.2.zip
+ppgp-v0.1.3.zip
 ```
 
 Each release also publishes a SHA-256 checksum next to the archive. Older release assets remain historical artifacts and are not the canonical download for the current release.
@@ -194,7 +194,7 @@ Canonical public package name:
 Current package release:
 
 ```text
-@fatboy-coder/ppgp@0.1.2
+@fatboy-coder/ppgp@0.1.3
 ```
 
 The original unscoped name `ppgp` is intentionally not used because npm's similarity protection rejects it as too close to existing high-traffic package names.
@@ -218,19 +218,19 @@ npx @fatboy-coder/ppgp handoff
 When diagnosing `npx` executable inference or npm cache behavior, the explicit npm-exec form removes ambiguity about which binary must run:
 
 ```bash
-npm exec --yes --package=@fatboy-coder/ppgp@0.1.2 -- ppgp --version
+npm exec --yes --package=@fatboy-coder/ppgp@0.1.3 -- ppgp --version
 ```
 
 On Windows PowerShell, some npm versions can route `npm` through the `npm.ps1` wrapper and mis-handle forwarded arguments. If the command above prints the npm version instead of the PPGP version, bypass the wrapper explicitly:
 
 ```powershell
-npm.cmd exec --yes --package=@fatboy-coder/ppgp@0.1.2 -- ppgp --version
+npm.cmd exec --yes --package=@fatboy-coder/ppgp@0.1.3 -- ppgp --version
 ```
 
 Expected output:
 
 ```text
-0.1.2
+0.1.3
 ```
 
 This is a shell-wrapper issue, not evidence that the PPGP package lacks its CLI binary. PPGP CI packs and installs the package on Windows and verifies the generated `ppgp.cmd` shim by executing `ppgp --version`.
@@ -238,7 +238,7 @@ This is a shell-wrapper issue, not evidence that the PPGP package lacks its CLI 
 A plain `ppgp` command is expected only after the package has been installed globally or linked for local development:
 
 ```bash
-npm install -g @fatboy-coder/ppgp@0.1.2
+npm install -g @fatboy-coder/ppgp@0.1.3
 ppgp --version
 ```
 
@@ -304,15 +304,15 @@ GitHub Actions runs the test suite on Linux and Windows and includes an installe
 
 ## Version mapping
 
-PPGP v0.1.2 uses one canonical current release version across the protocol specification and versioned distribution artifacts:
+PPGP v0.1.3 uses one canonical current release version across the protocol specification and versioned distribution artifacts:
 
 ```text
-PPGP specification 0.1.2
-npm package @fatboy-coder/ppgp@0.1.2
-GitHub package @fatboy-coder/ppgp@0.1.2
-Codex/Gemini/Agent Plugin adapters 0.1.2
-Agent Skill metadata 0.1.2
-GitHub release v0.1.2
+PPGP specification 0.1.3
+npm package @fatboy-coder/ppgp@0.1.3
+GitHub package @fatboy-coder/ppgp@0.1.3
+Codex/Gemini/Agent Plugin adapters 0.1.3
+Agent Skill metadata 0.1.3
+GitHub release v0.1.3
 ```
 
 Claude's repository-backed plugin manifest intentionally does not pin a static version because client refresh follows repository revisions. This is an adapter caching policy, not a second PPGP version.

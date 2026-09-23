@@ -2,7 +2,7 @@
 
 > Portable continuity protocol for long-running coding agents.
 
-**Status:** Experimental v0.1.2  
+**Status:** Experimental v0.1.3  
 **First public release:** 2026-08-24  
 **Current release:** 2026-08-26  
 **License:** MIT  
@@ -12,7 +12,7 @@ PPGP is an open, vendor-neutral continuity protocol for long-running AI coding a
 
 It does not replace model memory, Git, tests, MCP or provider-specific compaction. It defines a small control protocol around them.
 
-**[Try with npm](https://www.npmjs.com/package/@fatboy-coder/ppgp)** · **[Download PPGP v0.1.2](https://github.com/Fatboy-coder/ppgp/releases/latest/download/ppgp-v0.1.2.zip)** · **[Read the specification](./SPEC.md)** · **[Platform compatibility](./COMPATIBILITY.md)** · **[Run an evaluation](./EVALUATION.md)** · **[Cite PPGP](./CITATION.cff)**
+**[Try with npm](https://www.npmjs.com/package/@fatboy-coder/ppgp)** · **[Download PPGP v0.1.3](https://github.com/Fatboy-coder/ppgp/releases/latest/download/ppgp-v0.1.3.zip)** · **[Read the specification](./SPEC.md)** · **[Platform compatibility](./COMPATIBILITY.md)** · **[Run an evaluation](./EVALUATION.md)** · **[Cite PPGP](./CITATION.cff)**
 
 ## Try PPGP in 30 seconds
 
@@ -49,7 +49,7 @@ A coding agent should be able to recover the minimum operational state needed to
 | Goal | Resource |
 | --- | --- |
 | Try the public npm CLI | `npx @fatboy-coder/ppgp init` |
-| Download the installable skill | [`ppgp-v0.1.2.zip`](https://github.com/Fatboy-coder/ppgp/releases/latest/download/ppgp-v0.1.2.zip) |
+| Download the installable skill | [`ppgp-v0.1.3.zip`](https://github.com/Fatboy-coder/ppgp/releases/latest/download/ppgp-v0.1.3.zip) |
 | Install with Agent Skills CLI | `npx skills add https://github.com/Fatboy-coder/ppgp/tree/main/skills/ppgp` |
 | Install through a native agent platform | [`COMPATIBILITY.md`](./COMPATIBILITY.md) |
 | Understand the protocol | [`SPEC.md`](./SPEC.md) |
@@ -103,7 +103,7 @@ GIT            forensic history and implementation evidence
 
 ## Install
 
-PPGP v0.1.2 ships as an [Agent Skills](https://agentskills.io/) compatible skill, as a dependency-free Node.js CLI published on npm, and through thin native distribution adapters for major coding-agent ecosystems.
+PPGP v0.1.3 ships as an [Agent Skills](https://agentskills.io/) compatible skill, as a dependency-free Node.js CLI published on npm, and through thin native distribution adapters for major coding-agent ecosystems.
 
 ### Universal Agent Skills route
 
@@ -152,7 +152,7 @@ The CLI is deliberately deterministic. It helps inspect, scaffold and recover re
 
 ### Manual install
 
-Download the current release archive from [`ppgp-v0.1.2.zip`](https://github.com/Fatboy-coder/ppgp/releases/latest/download/ppgp-v0.1.2.zip), extract it, then copy or upload the `ppgp` skill directory into a client that implements the Agent Skills standard.
+Download the current release archive from [`ppgp-v0.1.3.zip`](https://github.com/Fatboy-coder/ppgp/releases/latest/download/ppgp-v0.1.3.zip), extract it, then copy or upload the `ppgp` skill directory into a client that implements the Agent Skills standard.
 
 The repository also keeps the canonical source under [`skills/ppgp/`](./skills/ppgp/) for inspection and development.
 
@@ -236,9 +236,9 @@ Citation metadata is provided in [`CITATION.cff`](./CITATION.cff).
 
 Version-specific citation is strongly preferred. The public GitHub handle is used as the author identifier until real-name citation metadata is added.
 
-## What v0.1.2 deliberately does not claim
+## What v0.1.3 deliberately does not claim
 
-PPGP v0.1.2 does **not** claim to:
+PPGP v0.1.3 does **not** claim to:
 
 - invent persistent agent memory;
 - outperform existing memory systems;
@@ -247,7 +247,7 @@ PPGP v0.1.2 does **not** claim to:
 - eliminate human review;
 - make multi-agent systems inherently better.
 
-The purpose of the public v0.1.2 release is to make the protocol inspectable, reproducible and falsifiable.
+The purpose of the public v0.1.3 release is to make the protocol inspectable, reproducible and falsifiable.
 
 ## Project mission
 
@@ -259,7 +259,7 @@ The project may be used commercially under the MIT license. The community-orient
 
 PPGP v0.1 was first published publicly on 2026-08-24 in the `Fatboy-coder/fatboy-coder` repository under `/ppgp`.
 
-The current release is PPGP v0.1.2. This repository is now the canonical home of the protocol. The original Git history remains the first public record of the initial v0.1 release.
+The current release is PPGP v0.1.3. This repository is now the canonical home of the protocol. The original Git history remains the first public record of the initial v0.1 release.
 
 ## Versioning
 

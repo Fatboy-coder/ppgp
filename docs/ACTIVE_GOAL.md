@@ -7,7 +7,7 @@ Ship a PPGP v0.1.3 hardening candidate on branch `release/harden-0.1.3`: identic
 The 2026-09-23 adversarial validation (`ADVERSARIAL_VALIDATION.md`) found no core semantic failure in v0.1.2 but found that the published CLI parses none of the real ACTIVE_GOAL files in use (OneClickPDF, Search Control Plane), exits 0 on garbage, resolves root from cwd, and cannot see goals on other refs. `ROADMAP.md` commits to a v0.1.3 hardening candidate before any protocol extension.
 
 ## PHASE
-EXECUTE
+HARDEN
 
 ## DEFINITION_OF_DONE
 1. `ppgp status`/`handoff` parse the canonical scaffold, an SCP-style `KEY:` file and an OCPDF-style free-header file without printing `(not set)` for every field while exiting 0; partially recognized files are reported as partial with the unrecognized sections named.
@@ -49,10 +49,13 @@ EXECUTE
 - Research evidence at `research/` on branch `research/ppgp-reality-audit` (commits a46bc73, 4235b0c): 10 fixtures, 2 harness scripts, captured outputs.
 
 ## COMPLETED
-- Preflight, fast-forward, branch creation, this goal file.
+- Preflight, fast-forward, branch creation, goal file (d285d9a).
+- DoD 1-10: parser, diagnostics, root discovery, doctor ref visibility + git summary, force backup, docs (SPEC/skill/reference/README/CHANGELOG), mirrors synced, hardening suite (9 blocks, 12 fixtures), adversarial harness re-run against candidate CLI (all tooling failures fixed; unknown distill/close unchanged by design).
 
 ## REMAINING
-- DoD items 1–12, in order: parser + diagnostics + root + doctor + backup (bin), tests + fixtures, docs + mirrors, adversarial re-run, version bump, push + PR + CI.
+- DoD 11: version 0.1.3 across version-bearing files, ROADMAP `## v0.1.3` section, mirrors re-synced, npm test green.
+- DoD 12: push branch, open PR, CI green on ubuntu + windows.
+- Closure: self-hosting evidence in final report, distill durable lessons, delete this file (after owner review decision, since the branch is under review).
 
 ## BLOCKERS
 - None. Merge/tag/release/publish are owner-only by mission mandate (not blockers for this goal's DoD).
@@ -61,7 +64,10 @@ EXECUTE
 - Merge to main, tag v0.1.3, GitHub Release, npm publish: owner only, after review.
 
 ## VERIFICATION_EVIDENCE
-- `npm test` on f7858d8: "PPGP CLI, version consistency, and distribution tests passed." / benchmark passed / package verified.
+- `npm test` on f7858d8: 3 suites passed (baseline).
+- `npm test` on candidate (post-commit 1): cli/version/distribution, hardening, benchmark, package all passed.
+- Adversarial harness re-run (research/tests/run-adversarial.sh with PPGP_CLI=bin/ppgp.js): empty/garbage exit 1, missing sections exit 2, CLOSED-with-file warned, nested docs/ cwd resolves repo root, doctor prints branch/HEAD/dirty count.
+- Real files: OCPDF docs/ACTIVE_GOAL.md -> partial, exit 2, 3 unrecognized sections listed, NEXT recovered; SCP docs/ACTIVE_GOAL.md -> ok, exit 0, GOAL/PHASE/FROZEN/DoD/NEXT recovered, PRODUCT_DIRECTION + RESIDUAL_LIMITATIONS retained.
 
 ## NEXT_EXECUTABLE_ACTION
-- Rewrite `bin/ppgp.js` parser, diagnostics, root discovery, doctor and backup per FROZEN_DECISIONS; run existing `npm test` to confirm no regression before adding new tests.
+- Bump 0.1.2 -> 0.1.3 in package.json, README, SPEC, EVALUATION, CONTRIBUTING, COMPATIBILITY, DISTRIBUTION, ROADMAP, SKILL.md, PPGP.md, CITATION.cff, BENCHMARK_PROTOCOL, pair-001-ppgp.json, codex/gemini/agent plugin manifests; sync mirrors; npm test; commit.
