@@ -11,7 +11,7 @@ These are different facts and this repository records them in different places.
 | Source version of this tree | `version` in `package.json`; mirrored in `SPEC.md`, `skills/ppgp/SKILL.md`, `CITATION.cff`, adapter manifests |
 | Latest published GitHub Release | https://github.com/Fatboy-coder/ppgp/releases/latest |
 | Latest published npm package | https://www.npmjs.com/package/@fatboy-coder/ppgp |
-| Whether the source version is published | `CHANGELOG.md`: the entry reads `candidate` until publication, then carries the release date |
+| Whether and when the source version was published | GitHub Releases and npm only; the source tree never records it |
 | Historical releases | `CHANGELOG.md` and GitHub Releases |
 
 A source tree may carry a version that is not yet published. Documents in this repository therefore never hard-code a future download asset or package version; they link to the durable release and package pages instead.
@@ -90,7 +90,7 @@ Publish PPGP to GitHub Packages
 
 The release workflow refuses a version that does not equal the committed `package.json` version, then creates the immutable tag, the GitHub Release and the `ppgp-v<version>.zip` asset. Downstream workflows re-check the release and package version before publishing. Manual dispatches exist to republish a package after an infrastructure failure. No long-lived npm token is required.
 
-Until every step succeeds, the source version stays a candidate: `CHANGELOG.md` keeps `candidate` in its heading and `CITATION.cff` carries no `date-released`. `npm test` enforces that rule.
+The tree tagged by the release is immutable, so it never embeds publication state: `CHANGELOG.md` uses a bare `## <version>` heading and `CITATION.cff` carries no `date-released`. If a publish step fails after the merge, nothing in `main` is wrong; GitHub Releases and npm simply do not list the version yet. `npm test` enforces that rule.
 
 ## What `npm test` validates about distribution
 

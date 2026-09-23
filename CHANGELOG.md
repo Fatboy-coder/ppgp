@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.1.3 - candidate
+## 0.1.3
 
-Hardening release. Protocol semantics are unchanged from 0.1.2; the CLI and documentation are brought up to the model that the 2026-09-23 adversarial validation (`research/2026-09-23-adversarial-validation.md`) found sound.
+Publication state and date: see [GitHub Releases](https://github.com/Fatboy-coder/ppgp/releases). Hardening release. Protocol semantics are unchanged from 0.1.2; the CLI and documentation are brought up to the model that the 2026-09-23 adversarial validation (`research/2026-09-23-adversarial-validation.md`) found sound.
 
 CLI:
 
@@ -22,7 +22,7 @@ Documentation (clarifications only, no new normative fields):
 - blocker scope expressed in prose;
 - GOAL / LOOP / TASK / SESSION relationship and end-to-end goal granularity guidance;
 - `distill` and `close` stay agent-performed operations;
-- source version and published release recorded as separate facts: documents link to GitHub Releases and npm instead of hard-coding unpublished assets, and `CITATION.cff` carries `date-released` only once the release exists;
+- source version and published release recorded as separate facts: the source tree carries only its version; documents link to GitHub Releases and npm instead of hard-coding release assets, and neither `CHANGELOG.md` nor `CITATION.cff` embeds a publication date or candidate marker that a tagged tree could not keep current;
 - compatibility matrix carries evidence type and last-verified date per platform.
 
 Repository:

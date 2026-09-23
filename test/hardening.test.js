@@ -1,6 +1,6 @@
 'use strict';
 // v0.1.3 hardening regression suite. Fixtures under test/fixtures/ were derived from the
-// 2026-09-23 adversarial validation (research branch research/ppgp-reality-audit).
+// 2026-09-23 adversarial validation (research/2026-09-23-adversarial-validation.md).
 // Every case runs in a disposable temp directory; nothing depends on the developer's repository.
 
 const fs = require('fs');

@@ -23,7 +23,7 @@ Scope, as implemented, hardens the v0.1.2 implementation without changing its co
 - regression suite derived from the adversarial fixtures;
 - a smaller root surface: compatibility, distribution and evaluation guides under `docs/`, benchmark protocol under `benchmarks/`, evidence under `research/`.
 
-Path: owner review → merge → release workflow → v0.1.3 published → changelog entry dated.
+Path: owner review → merge → release workflow → v0.1.3 listed on GitHub Releases and npm. The tree itself does not change at publication.
 
 ## After v0.1.3
 

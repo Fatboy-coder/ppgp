@@ -89,7 +89,7 @@ try {
   const sourceVersionChecks = [
     ['README.md', `**Source version:** v${version}`],
     ['SPEC.md', `# PPGP Specification v${version}`],
-    ['CHANGELOG.md', `## ${version} - `],
+    ['CHANGELOG.md', `## ${version}`],
     ['ROADMAP.md', `## v${version}`],
     ['skills/ppgp/SKILL.md', `version: "${version}"`],
     ['skills/ppgp/SKILL.md', `PPGP/${version}`],
@@ -103,26 +103,16 @@ try {
     assert(readText(file).includes(expected), `${file} is not aligned with source version ${version}: missing ${expected}`);
   }
 
-  // Published-release truth is separate. A version is published only when its CHANGELOG entry carries a date;
-  // until then the entry reads "candidate" and no active document may claim the release exists.
-  const changelogEntry = readText('CHANGELOG.md').match(new RegExp(`^## ${version.replace(/\\./g, '\\\\.')} - (.+?)\\s*$`, 'm'));
-  assert(changelogEntry, `CHANGELOG.md has no entry for ${version}`);
-  const releaseDate = changelogEntry[1].trim();
-  const published = /^\d{4}-\d{2}-\d{2}$/.test(releaseDate);
-  assert(published || releaseDate === 'candidate', `CHANGELOG entry for ${version} must be dated or marked candidate, got "${releaseDate}"`);
-  const citation = readText('CITATION.cff');
-  if (published) {
-    assert(citation.includes(`date-released: ${releaseDate}`), `CITATION.cff date-released must equal the CHANGELOG release date ${releaseDate}`);
-  } else {
-    assert(!/^date-released:/m.test(citation), 'CITATION.cff must not carry date-released while the CHANGELOG entry is a candidate');
-  }
+  // Publication state is never source truth. The source tree carries only its version; whether and when that
+  // version was published is answered by GitHub Releases and npm. A tagged tree is immutable, so it must not
+  // embed a publication date or a candidate marker that would go stale after the release.
+  assert(new RegExp(`^## ${version.replace(/\./g, '\\.')}\\s*$`, 'm').test(readText('CHANGELOG.md')), `CHANGELOG.md entry for ${version} must be a bare "## ${version}" heading; publication dates live on GitHub Releases`);
+  assert(!/^date-released:/m.test(readText('CITATION.cff')), 'CITATION.cff must not carry date-released; the release date is canonical on GitHub Releases');
   for (const file of ['README.md', 'docs/DISTRIBUTION.md', 'docs/COMPATIBILITY.md', 'docs/EVALUATION.md', 'CONTRIBUTING.md', 'ROADMAP.md', 'SPEC.md', 'skills/ppgp/SKILL.md', 'benchmarks/PROTOCOL.md']) {
     const text = readText(file);
     assert(!/releases\/latest\/download\/ppgp-v/.test(text), `${file} hard-codes a versioned latest-download URL; link to releases/latest instead`);
-    if (!published) {
-      assert(!text.includes(`ppgp-v${version}.zip`), `${file} names an unpublished release asset ppgp-v${version}.zip`);
-      assert(!text.includes(`@fatboy-coder/ppgp@${version}`), `${file} names an unpublished npm version @${version}`);
-    }
+    assert(!text.includes(`ppgp-v${version}.zip`), `${file} names a release asset for the source version; link to releases/latest instead`);
+    assert(!text.includes(`@fatboy-coder/ppgp@${version}`), `${file} pins the source version as an npm install target; link to the npm page instead`);
   }
 
   const distribution = readText('docs/DISTRIBUTION.md');

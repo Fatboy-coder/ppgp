@@ -34,7 +34,7 @@ After editing anything under `skills/ppgp/`, run `node scripts/sync-skill-mirror
 ## Rules that tests enforce
 
 - Source-version artifacts (`package.json`, `SPEC.md` title, skill metadata, compact reference title, `CITATION.cff`, adapter manifests, benchmark protocol, `ROADMAP.md`, `CHANGELOG.md`) agree on one version.
-- The `CHANGELOG.md` entry for that version reads `candidate` until the release is published; `CITATION.cff` carries `date-released` only once the entry is dated.
+- The source tree never records publication state. `CHANGELOG.md` heads the current entry with the bare version and `CITATION.cff` carries no `date-released`; whether and when a version was published is answered only by GitHub Releases and npm. A tagged tree is immutable, so any embedded "candidate" or date would go stale.
 - No active document hard-codes an unpublished `ppgp-v<version>.zip` asset or `@<version>` install line; published versions are linked through GitHub Releases and npm.
 - Adapter directories stay out of the npm payload; no generated archive is tracked.
 - A canonical thirteen-field `ACTIVE_GOAL` parses as conformant; partial, malformed and missing state are reported distinctly.
@@ -54,7 +54,7 @@ Substantial changes to this repository are tracked with the protocol itself: ope
 
 ## Releases
 
-Maintainers release through the guarded workflows described in [`docs/DISTRIBUTION.md`](./docs/DISTRIBUTION.md): bump `package.json` and the mirrored version strings on a release branch, keep the changelog entry marked `candidate`, merge after review, then run the release workflow, which tags, publishes the GitHub Release and chains npm and GitHub Packages publication. Only after that does the changelog entry receive its date.
+Maintainers release through the guarded workflows described in [`docs/DISTRIBUTION.md`](./docs/DISTRIBUTION.md): bump `package.json` and the mirrored version strings on a release branch, add the bare `## <version>` changelog entry, merge after review, then run the release workflow, which tags, publishes the GitHub Release and chains npm and GitHub Packages publication. Nothing in the tree changes after publication; the release date lives on the GitHub Release.
 
 ## Discussion style
 

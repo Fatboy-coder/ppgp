@@ -2,7 +2,7 @@
 
 > Open, vendor-neutral continuity protocol for coding agents: persistent goals, recoverable state, verified work, clean handoffs.
 
-**Source version:** v0.1.3 candidate (this tree; see `package.json`)  
+**Source version:** v0.1.3 (this tree; see `package.json`)  
 **Latest published release:** [GitHub Releases](https://github.com/Fatboy-coder/ppgp/releases/latest) · [npm](https://www.npmjs.com/package/@fatboy-coder/ppgp)  
 **Status:** experimental, maintainer-tested, adversarially exercised under documented scenarios  
 **License:** MIT
@@ -11,7 +11,7 @@
 
 Long-running coding agents lose their working context: sessions end, context is compacted, one agent replaces another. PPGP keeps the minimum state a fresh agent needs in repository-visible files, so work resumes from the repository instead of from a human retelling the story.
 
-It does not replace model memory, Git, tests or MCP. It is a small control protocol around them: one temporary `ACTIVE_GOAL` file with thirteen fields, a goal lifecycle, an inner verify-and-record loop, and rules for evidence, blockers, handoff and closure.
+It does not replace model memory, Git, tests or MCP. It is a small control protocol around them: one `ACTIVE_GOAL` state with thirteen fields (the reference CLI stores it in `docs/ACTIVE_GOAL.md`), a goal lifecycle, an inner verify-and-record loop, and rules for evidence, blockers, handoff and closure.
 
 ## Try it
 
@@ -61,7 +61,7 @@ The protocol is [`SPEC.md`](./SPEC.md). The compact agent-facing reference is [`
 ## Versions
 
 - **Source version** is the `version` in `package.json`, mirrored in `SPEC.md`, the skill metadata and `CITATION.cff`. It identifies this tree, released or not.
-- **Published versions** are only what [GitHub Releases](https://github.com/Fatboy-coder/ppgp/releases) and [npm](https://www.npmjs.com/package/@fatboy-coder/ppgp) actually list. `CHANGELOG.md` marks an entry `candidate` until it is published.
+- **Published versions** are only what [GitHub Releases](https://github.com/Fatboy-coder/ppgp/releases) and [npm](https://www.npmjs.com/package/@fatboy-coder/ppgp) actually list, with their dates. The source tree never records publication state, so a tagged tree never goes stale.
 - `0.x` releases are experimental and may change incompatibly. Cite the exact version you evaluated.
 
 What comes next is in [`ROADMAP.md`](./ROADMAP.md).
