@@ -7,7 +7,7 @@ Ship a PPGP v0.1.3 hardening candidate on branch `release/harden-0.1.3`: identic
 The 2026-09-23 adversarial validation (`ADVERSARIAL_VALIDATION.md`) found no core semantic failure in v0.1.2 but found that the published CLI parses none of the real ACTIVE_GOAL files in use (OneClickPDF, Search Control Plane), exits 0 on garbage, resolves root from cwd, and cannot see goals on other refs. `ROADMAP.md` commits to a v0.1.3 hardening candidate before any protocol extension.
 
 ## PHASE
-HARDEN
+SHIP
 
 ## DEFINITION_OF_DONE
 1. `ppgp status`/`handoff` parse the canonical scaffold, an SCP-style `KEY:` file and an OCPDF-style free-header file without printing `(not set)` for every field while exiting 0; partially recognized files are reported as partial with the unrecognized sections named.
@@ -51,9 +51,9 @@ HARDEN
 ## COMPLETED
 - Preflight, fast-forward, branch creation, goal file (d285d9a).
 - DoD 1-10: parser, diagnostics, root discovery, doctor ref visibility + git summary, force backup, docs (SPEC/skill/reference/README/CHANGELOG), mirrors synced, hardening suite (9 blocks, 12 fixtures), adversarial harness re-run against candidate CLI (all tooling failures fixed; unknown distill/close unchanged by design).
+- DoD 11: version 0.1.3 set in 15 files + mirrors (commit 1381188); npm test, installed-cli smoke (win32) and npm pack --dry-run (24 files, 38.2 kB, no fixtures) green.
 
 ## REMAINING
-- DoD 11: version 0.1.3 across version-bearing files, ROADMAP `## v0.1.3` section, mirrors re-synced, npm test green.
 - DoD 12: push branch, open PR, CI green on ubuntu + windows.
 - Closure: self-hosting evidence in final report, distill durable lessons, delete this file (after owner review decision, since the branch is under review).
 
@@ -70,4 +70,4 @@ HARDEN
 - Real files: OCPDF docs/ACTIVE_GOAL.md -> partial, exit 2, 3 unrecognized sections listed, NEXT recovered; SCP docs/ACTIVE_GOAL.md -> ok, exit 0, GOAL/PHASE/FROZEN/DoD/NEXT recovered, PRODUCT_DIRECTION + RESIDUAL_LIMITATIONS retained.
 
 ## NEXT_EXECUTABLE_ACTION
-- Bump 0.1.2 -> 0.1.3 in package.json, README, SPEC, EVALUATION, CONTRIBUTING, COMPATIBILITY, DISTRIBUTION, ROADMAP, SKILL.md, PPGP.md, CITATION.cff, BENCHMARK_PROTOCOL, pair-001-ppgp.json, codex/gemini/agent plugin manifests; sync mirrors; npm test; commit.
+- Push `release/harden-0.1.3`, open PR against main, watch CI (ubuntu + windows). If green: report READY FOR OWNER REVIEW. Owner decides merge; this file is deleted at closure after distill.
