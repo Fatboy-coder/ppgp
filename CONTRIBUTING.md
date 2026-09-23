@@ -52,6 +52,10 @@ A feature that requires one vendor SHOULD be marked as an optional adapter rathe
 
 The project should remain understandable without requiring a database, external service or paid platform.
 
+## Self-hosting
+
+Substantial changes to this repository are tracked with the protocol itself: open `docs/ACTIVE_GOAL.md` with `ppgp goal`, keep it current after verified material changes, and delete it at verified closure. When the goal lives on a topic branch, name the branch in `ROADMAP.md` so a fresh agent on `main` can find it. Historical goal state remains in Git.
+
 ## License
 
 By contributing, you agree that your contribution may be distributed under the MIT License used by this project.
