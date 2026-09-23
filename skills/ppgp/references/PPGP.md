@@ -52,6 +52,8 @@ NEXT_EXECUTABLE_ACTION
 
 Write current state, not a diary.
 
+All thirteen fields present = conformant. Fewer = partial; tools name the missing fields. Fields may be headers, bold lines or `KEY:` lines.
+
 ## Recovery
 
 Load the smallest sufficient boot packet:

@@ -1,0 +1,7 @@
+# Generated release archives are built by .github/workflows/publish-release.yml and attached to GitHub Releases; never commit them.
+/*.zip
+/*.zip.sha256
+/dist/
+/*.tgz
+node_modules/
+tmp-*

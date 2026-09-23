@@ -39,9 +39,9 @@ for (const required of [
   'benchmarks/result.schema.json',
   'benchmarks/pilot-01/RUNBOOK.md',
   'benchmarks/pilot-01/TASK.md',
-  'BENCHMARK_PROTOCOL.md',
+  'benchmarks/PROTOCOL.md',
   'SPEC.md',
-  'EVALUATION.md',
+  'docs/EVALUATION.md',
   'CITATION.cff',
 ]) {
   assert(files.has(required), `published npm package is missing ${required}`);

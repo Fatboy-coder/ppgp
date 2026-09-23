@@ -33,8 +33,7 @@
     "scripts/prepare-pilot-01.js",
     "benchmarks/",
     "SPEC.md",
-    "EVALUATION.md",
-    "BENCHMARK_PROTOCOL.md",
+    "docs/EVALUATION.md",
     "CITATION.cff",
     "LICENSE",
     "README.md"

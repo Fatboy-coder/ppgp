@@ -11,7 +11,7 @@ body:
     id: ppgp-version
     attributes:
       label: PPGP version
-      placeholder: "0.1"
+      placeholder: "the version printed by ppgp --version, or the SPEC.md title"
     validations:
       required: true
   - type: input

@@ -7,7 +7,7 @@ This directory contains the machine-readable format for PPGP recovery experiment
 - `pilot-01/` contains the first prepared empirical pilot fixture and execution runbook. It contains no observed result until real agent sessions are run.
 - Real experiments should keep one JSON record per condition/run and preserve raw logs separately when publication is safe.
 
-Read [`../BENCHMARK_PROTOCOL.md`](../BENCHMARK_PROTOCOL.md) before collecting results.
+Read [`PROTOCOL.md`](./PROTOCOL.md) before collecting results.
 
 ## First prepared pilot
 

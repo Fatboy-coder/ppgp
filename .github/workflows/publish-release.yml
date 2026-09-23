@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Semantic release version, for example 0.1.2"
+        description: "Release version to publish (MAJOR.MINOR.PATCH, no v prefix); must equal package.json version"
         required: true
         type: string
 
@@ -41,7 +41,7 @@ jobs:
 
           if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Invalid release version: '$RELEASE_VERSION'"
-            echo "Use an immutable three-part SemVer such as 0.1.2."
+            echo "Use an immutable three-part SemVer (MAJOR.MINOR.PATCH)."
             exit 1
           fi
 

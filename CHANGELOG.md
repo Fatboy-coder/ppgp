@@ -2,12 +2,12 @@
 
 ## 0.1.3 - candidate
 
-Hardening release. Protocol semantics are unchanged from 0.1.2; the CLI and documentation are brought up to the model that the 2026-09-23 adversarial validation (`ADVERSARIAL_VALIDATION.md`) found sound.
+Hardening release. Protocol semantics are unchanged from 0.1.2; the CLI and documentation are brought up to the model that the 2026-09-23 adversarial validation (`research/2026-09-23-adversarial-validation.md`) found sound.
 
 CLI:
 
 - tolerant ACTIVE_GOAL parser: fields are recognized as Markdown headers at any level, bold-only lines or upper-case `KEY:` lines, matched case-insensitively with a small alias set; unrecognized sections are retained and reported instead of dropped; the first of duplicate sections wins with a warning;
-- explicit state classification and exit codes: `0` valid (warnings on stderr), `2` partial (GOAL or NEXT_EXECUTABLE_ACTION missing), `1` malformed or missing; empty, unreadable or sectionless files no longer report healthy state;
+- explicit conformance classification and exit codes: `0` conformant (all thirteen SPEC 3.4 fields present; warnings on stderr), `2` partial (PPGP state recognized but canonical fields missing, each named), `1` malformed or missing; empty, unreadable or sectionless files no longer report healthy state;
 - diagnostics for missing sections, non-lifecycle PHASE values, `CLOSED` phase inside an existing ACTIVE_GOAL, `CLOSED` with non-empty REMAINING, and leftover scaffold placeholders; `doctor` surfaces the same findings;
 - repository root resolves from `--root`, else the Git top-level of the working directory, else the working directory, so nested invocation finds repository-level state; Git remains optional;
 - `doctor` prints branch, HEAD and working-tree change count and, when no ACTIVE_GOAL is checked out, lists other refs that carry one without switching or merging;
@@ -21,7 +21,16 @@ Documentation (clarifications only, no new normative fields):
 - parking convention for deferred goals using ROADMAP;
 - blocker scope expressed in prose;
 - GOAL / LOOP / TASK / SESSION relationship and end-to-end goal granularity guidance;
-- `distill` and `close` stay agent-performed operations.
+- `distill` and `close` stay agent-performed operations;
+- source version and published release recorded as separate facts: documents link to GitHub Releases and npm instead of hard-coding unpublished assets, and `CITATION.cff` carries `date-released` only once the release exists;
+- compatibility matrix carries evidence type and last-verified date per platform.
+
+Repository:
+
+- smaller root surface: `COMPATIBILITY.md`, `DISTRIBUTION.md` and `EVALUATION.md` moved under `docs/`, `BENCHMARK_PROTOCOL.md` to `benchmarks/PROTOCOL.md`, the adversarial validation record to `research/`; README rewritten as the single entry point with a repository map; CONTRIBUTING rewritten as the contributor path;
+- stale tracked archive `dist/ppgp-v0.1.zip` removed; generated release archives ignored;
+- CI push filter reduced to `main`; workflow inputs describe versions generically;
+- the v0.2.0 concurrency proposal retired to branch `research/v0.2-concurrency-experiment`.
 
 Tests:
 

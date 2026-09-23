@@ -53,7 +53,7 @@ function fields(out) {
 }
 
 try {
-  // 1. canonical happy path: scaffold -> status -> handoff, unchanged v0.1.2 behaviour, no warnings beyond TODOs
+  // 1. canonical happy path: scaffold (all thirteen fields) -> status -> handoff; conformant, TODO warnings only
   {
     const dir = repoWith('happy');
     assert(ppgp(['init', '--root', dir]).code === 0, 'init failed');
@@ -62,7 +62,7 @@ try {
     assert(status.code === 0, 'scaffold status must exit 0');
     assert(status.out.includes(`PPGP/${pkg.version} status from docs/ACTIVE_GOAL.md`), 'status header');
     assert(fields(status.out).goal === 'Ship the test', 'goal not recovered');
-    assert(status.out.includes('state: ok'), 'scaffold must be ok');
+    assert(status.out.includes('state: conformant'), 'scaffold with all thirteen fields must be conformant');
     assert(/TODO/.test(status.err) && !/missing/.test(status.err), 'scaffold warns about TODOs only');
     const handoff = ppgp(['handoff', '--root', dir]);
     assert(handoff.code === 0 && handoff.out.startsWith(`PPGP/${pkg.version}\nG=Ship the test\nP=THINK\n`), 'handoff packet shape changed');
@@ -72,11 +72,12 @@ try {
   // 2. realistic parsing: filled canonical file, SCP-style key lines, OCPDF-style free headers
   {
     const filled = ppgp(['status', '--root', repoWith('filled', 'filled-goal.md')]);
-    assert(filled.code === 0 && filled.out.includes('state: ok') && filled.err === '', `filled fixture must be clean: ${filled.err}`);
+    assert(filled.code === 0 && filled.out.includes('state: conformant') && filled.err === '', `filled fixture must be conformant with no warnings: ${filled.err}`);
     assert(fields(filled.out).next.startsWith('Write auth/tests/test_login_429.py'), 'filled next');
 
     const scp = ppgp(['status', '--root', repoWith('scp', 'scp-style.md')]);
-    assert(scp.code === 0, `SCP-style file must parse (exit ${scp.code})`);
+    assert(scp.code === 2 && scp.out.includes('state: partial'), `SCP-style file lacks canonical fields and must be partial (exit ${scp.code})`);
+    assert(/canonical field\(s\) missing \(8 of 13\): WHY, INVARIANTS, VERIFIED_CURRENT_STATE, COMPLETED, REMAINING, BLOCKERS, HUMAN_AUTHORITY_REQUIRED, VERIFICATION_EVIDENCE/.test(scp.err), `missing fields must be named: ${scp.err}`);
     const f = fields(scp.out);
     assert(f.goal.startsWith('Make the control plane able'), 'SCP GOAL: line not parsed');
     assert(f.phase.includes('OWNER REVIEW'), 'SCP CURRENT_PHASE alias not parsed');
@@ -86,14 +87,14 @@ try {
     assert(scp.out.includes('unrecognized: PRODUCT_DIRECTION | RESIDUAL_LIMITATIONS'), 'unknown keys must be listed, not dropped');
     assert(/not a lifecycle phase/.test(scp.err), 'non-lifecycle phase must warn');
     const scpHandoff = ppgp(['handoff', '--root', repoWith('scp2', 'scp-style.md')]);
-    assert(scpHandoff.code === 0 && scpHandoff.out.includes('N:owner reviews the PR'), 'SCP handoff');
+    assert(scpHandoff.code === 2 && scpHandoff.out.includes('N:owner reviews the PR'), 'SCP handoff recovers NEXT and stays partial');
 
     const ocpdf = ppgp(['status', '--root', repoWith('ocpdf', 'ocpdf-style.md')]);
     assert(ocpdf.code === 2, `OCPDF-style thin pointer must be partial (exit 2), got ${ocpdf.code}`);
     assert(ocpdf.out.includes('goal: (no GOAL section) title: Product Active Goal'), 'title fallback');
     assert(fields(ocpdf.out).next.includes('On or after'), '"Next executable sequence" header must map to NEXT');
     assert(ocpdf.out.includes('unrecognized: Current gate'), 'unrecognized headers must be listed');
-    assert(/required section\(s\) missing: GOAL/.test(ocpdf.err), 'missing GOAL must be reported');
+    assert(/canonical field\(s\) missing \(12 of 13\): GOAL, WHY, PHASE/.test(ocpdf.err), `missing fields must be named: ${ocpdf.err}`);
     assert(!ocpdf.out.includes('goal: (not set)'), 'the silent (not set) failure mode must be gone');
   }
 
@@ -104,7 +105,7 @@ try {
     ['blocker-scope.md', { blockers: 'Steps B and C are NOT blocked', next: 'Step B' }],
   ]) {
     const r = ppgp(['status', '--root', repoWith('repr', fixture)]);
-    assert(r.code === 0 && r.err === '', `${fixture} must be clean ok: exit ${r.code} ${r.err}`);
+    assert(r.code === 0 && r.out.includes('state: conformant') && r.err === '', `${fixture} must be conformant with no warnings: exit ${r.code} ${r.err}`);
     const f = fields(r.out);
     for (const [k, v] of Object.entries(expect)) assert(f[k].includes(v), `${fixture}: ${k} should contain "${v}", got "${f[k]}"`);
   }
@@ -112,10 +113,10 @@ try {
   // 4. malformed / contradictory diagnostics
   {
     const missing = ppgp(['status', '--root', repoWith('missing', 'malformed-missing-sections.md')]);
-    assert(missing.code === 2 && /required section\(s\) missing: NEXT_EXECUTABLE_ACTION/.test(missing.err), 'missing NEXT must be partial');
+    assert(missing.code === 2 && /canonical field\(s\) missing \(10 of 13\): WHY, DEFINITION_OF_DONE.*NEXT_EXECUTABLE_ACTION/.test(missing.err), `missing fields must be partial and named: ${missing.err}`);
 
     const headers = ppgp(['status', '--root', repoWith('headers', 'malformed-headers.md')]);
-    assert(headers.code === 0, `casing/level/bold/colon variants must parse: ${headers.err}`);
+    assert(headers.code === 2, `casing/level/bold/colon variants parse, but the file is partial: ${headers.err}`);
     const h = fields(headers.out);
     assert(h.goal === 'Lowercase header variant.' && h.phase === 'EXECUTE', 'lowercase and ### headers');
     assert(h.next === 'Trailing colon on header.', 'trailing-colon header');

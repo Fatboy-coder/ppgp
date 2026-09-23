@@ -1,60 +1,64 @@
 # Contributing to PPGP
 
-PPGP v0.1.3 is intentionally provisional.
+PPGP is experimental and published early so it can be tested on real repositories, challenged, simplified and corrected. Failure reports are at least as useful as positive results.
 
-The project is being published early so developers can test it on real repositories, challenge its assumptions, simplify it and report failures.
+## Quick start for contributors
 
-## Useful contributions
+```bash
+git clone https://github.com/Fatboy-coder/ppgp
+cd ppgp
+npm test                         # CLI, version consistency, hardening, benchmark, package suites
+node test/installed-cli.test.js  # packs and installs the package, runs the generated shim
+node bin/ppgp.js --help          # run the source CLI without installing
+```
 
-Especially valuable reports include:
+No dependencies are installed; the CLI and tests use Node's standard library only (Node 18+).
 
-- a fresh agent failed to recover the active goal;
-- PPGP created more documentation overhead than value;
-- a memory rule caused stale context or drift;
-- an agent escalated unnecessarily to a human;
-- a provider or IDE could not interpret the protocol;
-- a smaller representation preserved the same recovery quality;
-- a multi-agent workflow became less reliable because of handoff cost;
-- a concrete repository benefited from a modification to the protocol.
+## Where things live
 
-Positive results are welcome, but failure reports are at least as useful.
+```text
+SPEC.md                         the protocol; normative
+skills/ppgp/                    canonical Agent Skill (SKILL.md, references/PPGP.md); edit here only
+.agents/skills/ppgp/            generated mirror; never edit
+plugins/ppgp/skills/ppgp/       generated mirror for the Claude plugin; never edit
+bin/ppgp.js                     the CLI
+test/                           regression tests; test/fixtures/ holds ACTIVE_GOAL variants
+benchmarks/                     evaluation protocol, result schema, pilot fixture
+docs/                           COMPATIBILITY, DISTRIBUTION, EVALUATION; ACTIVE_GOAL.md while a goal is open
+research/                       dated, non-normative evidence records
+scripts/sync-skill-mirror.js    regenerates the two mirrors from skills/ppgp/
+```
 
-## Evidence
+After editing anything under `skills/ppgp/`, run `node scripts/sync-skill-mirror.js`; `npm test` fails if a mirror drifts.
 
-When practical, include:
+## Rules that tests enforce
 
-- agent/product and version;
-- repository scale or rough shape;
-- PPGP version;
-- relevant protocol state;
-- expected behavior;
-- observed behavior;
-- whether a human had to reconstruct context;
-- verification evidence.
+- Source-version artifacts (`package.json`, `SPEC.md` title, skill metadata, compact reference title, `CITATION.cff`, adapter manifests, benchmark protocol, `ROADMAP.md`, `CHANGELOG.md`) agree on one version.
+- The `CHANGELOG.md` entry for that version reads `candidate` until the release is published; `CITATION.cff` carries `date-released` only once the entry is dated.
+- No active document hard-codes an unpublished `ppgp-v<version>.zip` asset or `@<version>` install line; published versions are linked through GitHub Releases and npm.
+- Adapter directories stay out of the npm payload; no generated archive is tracked.
+- A canonical thirteen-field `ACTIVE_GOAL` parses as conformant; partial, malformed and missing state are reported distinctly.
 
-Do not publish proprietary code, credentials or confidential prompts merely to provide a reproduction.
+## Proposing a change
 
-## Discussion style
-
-Challenge the protocol, not the contributor.
-
-Prefer concrete counterexamples over status arguments.
-
-Do not assume that a technique working for one model or repository is universal.
-
-Claims of superiority should include reproducible evidence.
-
-## Maturity
-
-Changes should prefer the smallest rule that generalizes.
-
-A feature that requires one vendor SHOULD be marked as an optional adapter rather than added to the portable core.
-
-The project should remain understandable without requiring a database, external service or paid platform.
+1. Open an issue or start from an existing one; recovery failures and evaluation reports have issue forms.
+2. Branch from `main`. Keep protocol changes and implementation changes in separate PRs where practical.
+3. A change to protocol semantics needs a reproducible failure of the current model first. The evolution rule is falsification-driven: reproduce, classify (protocol, tooling, documentation, convention, operator error), try the existing model, make the smallest change, rerun the regression suite. See `research/` for how prior campaigns did this.
+4. Do not add a vendor-specific requirement to the portable core; add an optional adapter and document it in `docs/COMPATIBILITY.md` with its evidence type and date.
+5. Run `npm test` and `node test/installed-cli.test.js` locally; CI runs both on Linux and Windows.
+6. Describe what was verified and what was not. Do not use "validated", "proven" or "certified" for maintainer-run tests.
 
 ## Self-hosting
 
-Substantial changes to this repository are tracked with the protocol itself: open `docs/ACTIVE_GOAL.md` with `ppgp goal`, keep it current after verified material changes, and delete it at verified closure. When the goal lives on a topic branch, name the branch in `ROADMAP.md` so a fresh agent on `main` can find it. Historical goal state remains in Git.
+Substantial changes to this repository are tracked with the protocol itself: open `docs/ACTIVE_GOAL.md` with `node bin/ppgp.js goal "<outcome>"`, keep it current after verified material changes, and delete it at verified closure. When the goal lives on a topic branch, name the branch in `ROADMAP.md` so a fresh agent on `main` can find it. Historical goal state remains in Git.
+
+## Releases
+
+Maintainers release through the guarded workflows described in [`docs/DISTRIBUTION.md`](./docs/DISTRIBUTION.md): bump `package.json` and the mirrored version strings on a release branch, keep the changelog entry marked `candidate`, merge after review, then run the release workflow, which tags, publishes the GitHub Release and chains npm and GitHub Packages publication. Only after that does the changelog entry receive its date.
+
+## Discussion style
+
+Challenge the protocol, not the contributor. Prefer concrete counterexamples over status arguments. Do not assume a technique that works for one model or repository is universal.
 
 ## License
 

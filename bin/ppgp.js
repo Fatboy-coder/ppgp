@@ -20,8 +20,8 @@ const SECTIONS = [
   'HUMAN_AUTHORITY_REQUIRED', 'VERIFICATION_EVIDENCE', 'NEXT_EXECUTABLE_ACTION'
 ];
 
-// Without GOAL and NEXT_EXECUTABLE_ACTION a fresh agent cannot resume; everything else is a warning.
-const REQUIRED = ['GOAL', 'NEXT_EXECUTABLE_ACTION'];
+// Conformance (SPEC 3.4): all thirteen fields present = CONFORMANT; some PPGP state recognized but
+// canonical fields missing = PARTIAL; no usable structure = MALFORMED; no file = MISSING.
 
 // Small alias table for names seen in real repositories. Kept deliberately short.
 const ALIASES = {
@@ -209,7 +209,7 @@ function isEmptyish(value) {
   return !stripped || /^(none|nothing|n\/a|-)\b/i.test(stripped) && stripped.split(/\n/).length === 1;
 }
 
-// Classifies parsed state: ok | partial | malformed, plus human-readable warnings.
+// Classifies parsed state: conformant | partial | malformed, plus human-readable warnings.
 function analyze(parsed, content) {
   const warnings = [];
   const present = Object.keys(parsed.sections);
@@ -227,10 +227,7 @@ function analyze(parsed, content) {
   }
 
   const missing = SECTIONS.filter((s) => !present.includes(s));
-  const missingRequired = missing.filter((s) => REQUIRED.includes(s));
-  const missingOptional = missing.filter((s) => !REQUIRED.includes(s));
-  if (missingRequired.length) warnings.push(`required section(s) missing: ${missingRequired.join(', ')}`);
-  if (missingOptional.length) warnings.push(`section(s) missing: ${missingOptional.join(', ')}`);
+  if (missing.length) warnings.push(`canonical field(s) missing (${missing.length} of ${SECTIONS.length}): ${missing.join(', ')}`);
   for (const d of parsed.duplicates) warnings.push(`duplicate section ${d.name} at line ${d.line} ignored (first occurrence kept)`);
   if (parsed.unknown.length) warnings.push(`unrecognized section(s) kept as-is: ${parsed.unknown.map((u) => `"${u.title}"`).join(', ')}`);
 
@@ -244,7 +241,7 @@ function analyze(parsed, content) {
   const todo = (content.match(/\bTODO\b/g) || []).length;
   if (todo) warnings.push(`${todo} scaffold TODO placeholder(s) still present`);
 
-  return { severity: missingRequired.length ? 'partial' : 'ok', reason: null, warnings };
+  return { severity: missing.length ? 'partial' : 'conformant', reason: null, warnings };
 }
 
 function oneLine(value, fallback = '(not set)') {

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Existing GitHub Release version, for example 0.1.2"
+        description: "Existing published GitHub Release version (MAJOR.MINOR.PATCH, no v prefix)"
         required: true
         type: string
   workflow_run:

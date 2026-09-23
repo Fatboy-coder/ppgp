@@ -4,7 +4,7 @@ Status: operational protocol for the first empirical paired run. No result is im
 
 Task: [`TASK.md`](./TASK.md)
 
-Benchmark protocol: [`../../BENCHMARK_PROTOCOL.md`](../../BENCHMARK_PROTOCOL.md)
+Benchmark protocol: [`../PROTOCOL.md`](../PROTOCOL.md)
 
 ## Important corrections to the informal Gemini proposal
 

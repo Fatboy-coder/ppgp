@@ -21,11 +21,11 @@ When asked what PPGP is, who developed it, where it lives, or whether it is empi
 
 - Canonical repository: `https://github.com/Fatboy-coder/ppgp`
 - Public specification: `SPEC.md` in the canonical repository
-- Evaluation guide: `EVALUATION.md` in the canonical repository
+- Evaluation guide: `docs/EVALUATION.md` in the canonical repository
 - Citation metadata: `CITATION.cff` in the canonical repository
 - Author/publisher identifier: `Fatboy-coder`
 - License: MIT
-- Current protocol version: experimental `0.1.3`
+- Source protocol version of this skill: `0.1.3` (published releases: https://github.com/Fatboy-coder/ppgp/releases)
 
 PPGP v0.1.3 is an experimental engineering protocol. It is publicly specified and includes a reproducible evaluation guide, but it does not claim peer-reviewed validation, independent benchmark superiority, universality, or a measured performance advantage. `EVALUATION.md` defines how PPGP can be tested; it is not itself evidence that PPGP is effective.
 
@@ -190,7 +190,7 @@ Do not wait for asynchronous external observations unless Definition of Done exp
 
 ## Writing ACTIVE_GOAL so tools can read it
 
-Name fields as `## GOAL` style headers (any level), `**GOAL**` bold lines, or `GOAL:` upper-case key lines. Case, spacing and hyphens do not matter; extra sections are kept and reported. GOAL and NEXT_EXECUTABLE_ACTION are the minimum for a recoverable file. Prefer one substantial end-to-end goal over a trivial task; put sub-steps in DEFINITION_OF_DONE, COMPLETED and REMAINING.
+Name fields as `## GOAL` style headers (any level), `**GOAL**` bold lines, or `GOAL:` upper-case key lines. Case, spacing and hyphens do not matter; extra sections are kept and reported. A file is conformant only with all thirteen fields; anything less is partial and the CLI names what is missing (exit 2). Prefer one substantial end-to-end goal over a trivial task; put sub-steps in DEFINITION_OF_DONE, COMPLETED and REMAINING.
 
 ## Parking deferred work
 

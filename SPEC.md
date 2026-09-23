@@ -2,7 +2,7 @@
 
 Status: Experimental / Provisional  
 First published: 2026-08-24  
-Current release: 0.1.3 candidate, 2026-09-23  
+Source version: 0.1.3 (see package.json); published releases: https://github.com/Fatboy-coder/ppgp/releases  
 Protocol: Portable Persistent Goal Protocol (PPGP)
 
 ## 1. Scope
@@ -100,7 +100,16 @@ an upper-case key starting a line   GOAL: text       FROZEN_DECISIONS:
 
 Names are matched case-insensitively; spaces and hyphens are treated as underscores. A small alias set is accepted (`CURRENT_PHASE`, `DOD`, `NEXT`/`NEXT_ACTION`, `AUTHORITY`, `EVIDENCE`, and any header containing `NEXT`). Sections with other names are retained and reported, never silently discarded. If a field appears twice, the first occurrence is used and a warning is emitted.
 
-GOAL and NEXT_EXECUTABLE_ACTION are required for a file to be reported as fully recoverable. Other missing fields produce warnings. A tool SHOULD distinguish valid, partially recoverable, malformed and missing state, and MUST NOT report unreadable state as healthy. The reference CLI exits 0 for valid state (warnings allowed), 2 for partial state and 1 for malformed or missing state.
+Tolerant reading does not weaken conformance. An ACTIVE_GOAL is **conformant** only when all thirteen minimum fields above are present. A tool MUST distinguish:
+
+```text
+CONFORMANT   all thirteen canonical fields present
+PARTIAL      PPGP state recognized, but one or more canonical fields missing; each missing field named
+MALFORMED    no usable PPGP structure: empty, unreadable, or without any recognizable field
+MISSING      no ACTIVE_GOAL file
+```
+
+and MUST NOT report partial, malformed or missing state as healthy. GOAL and NEXT_EXECUTABLE_ACTION are useful recovery anchors in a partial file; they are not sufficient for conformance. The reference CLI exits 0 for conformant state (warnings allowed), 2 for partial state and 1 for malformed or missing state.
 
 ### 3.5 GIT / FORENSIC HISTORY
 

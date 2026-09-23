@@ -85,34 +85,51 @@ try {
   assert(canonicalSkill === claudeSkill, 'Claude packaged skill mirror drifted from canonical SKILL.md');
   assert(canonicalRef === claudeRef, 'Claude packaged reference mirror drifted from canonical PPGP.md');
 
-  const currentVersionChecks = [
-    ['README.md', `**Status:** Experimental v${version}`],
-    ['README.md', `ppgp-v${version}.zip`],
+  // Source-version artifacts must agree on the package.json version. This says nothing about publication.
+  const sourceVersionChecks = [
+    ['README.md', `**Source version:** v${version}`],
     ['SPEC.md', `# PPGP Specification v${version}`],
-    ['EVALUATION.md', `PPGP v${version} is experimental.`],
-    ['CONTRIBUTING.md', `PPGP v${version} is intentionally provisional.`],
-    ['COMPATIBILITY.md', `PPGP v${version} remains experimental`],
-    ['DISTRIBUTION.md', `PPGP specification ${version}`],
-    ['DISTRIBUTION.md', `@fatboy-coder/ppgp@${version}`],
+    ['CHANGELOG.md', `## ${version} - `],
     ['ROADMAP.md', `## v${version}`],
     ['skills/ppgp/SKILL.md', `version: "${version}"`],
     ['skills/ppgp/SKILL.md', `PPGP/${version}`],
     ['skills/ppgp/references/PPGP.md', `# PPGP v${version} Compact Reference`],
     ['CITATION.cff', `version: "${version}"`],
-    ['BENCHMARK_PROTOCOL.md', `Protocol under test: PPGP v${version}`],
+    ['benchmarks/PROTOCOL.md', `Protocol under test: PPGP v${version}`],
     ['benchmarks/examples/pair-001-ppgp.json', `"ppgpVersion": "${version}"`],
   ];
 
-  for (const [file, expected] of currentVersionChecks) {
-    assert(readText(file).includes(expected), `${file} is not aligned with current version ${version}: missing ${expected}`);
+  for (const [file, expected] of sourceVersionChecks) {
+    assert(readText(file).includes(expected), `${file} is not aligned with source version ${version}: missing ${expected}`);
   }
 
-  const readme = readText('README.md');
-  const distribution = readText('DISTRIBUTION.md');
+  // Published-release truth is separate. A version is published only when its CHANGELOG entry carries a date;
+  // until then the entry reads "candidate" and no active document may claim the release exists.
+  const changelogEntry = readText('CHANGELOG.md').match(new RegExp(`^## ${version.replace(/\\./g, '\\\\.')} - (.+?)\\s*$`, 'm'));
+  assert(changelogEntry, `CHANGELOG.md has no entry for ${version}`);
+  const releaseDate = changelogEntry[1].trim();
+  const published = /^\d{4}-\d{2}-\d{2}$/.test(releaseDate);
+  assert(published || releaseDate === 'candidate', `CHANGELOG entry for ${version} must be dated or marked candidate, got "${releaseDate}"`);
+  const citation = readText('CITATION.cff');
+  if (published) {
+    assert(citation.includes(`date-released: ${releaseDate}`), `CITATION.cff date-released must equal the CHANGELOG release date ${releaseDate}`);
+  } else {
+    assert(!/^date-released:/m.test(citation), 'CITATION.cff must not carry date-released while the CHANGELOG entry is a candidate');
+  }
+  for (const file of ['README.md', 'docs/DISTRIBUTION.md', 'docs/COMPATIBILITY.md', 'docs/EVALUATION.md', 'CONTRIBUTING.md', 'ROADMAP.md', 'SPEC.md', 'skills/ppgp/SKILL.md', 'benchmarks/PROTOCOL.md']) {
+    const text = readText(file);
+    assert(!/releases\/latest\/download\/ppgp-v/.test(text), `${file} hard-codes a versioned latest-download URL; link to releases/latest instead`);
+    if (!published) {
+      assert(!text.includes(`ppgp-v${version}.zip`), `${file} names an unpublished release asset ppgp-v${version}.zip`);
+      assert(!text.includes(`@fatboy-coder/ppgp@${version}`), `${file} names an unpublished npm version @${version}`);
+    }
+  }
+
+  const distribution = readText('docs/DISTRIBUTION.md');
   const releaseWorkflow = readText('.github/workflows/publish-release.yml');
-  assert(!readme.includes('releases/latest/download/ppgp-v0.1.zip'), 'README still points at stale ppgp-v0.1.zip alias');
   assert(!distribution.includes('npm 0.1.0'), 'DISTRIBUTION still contains stale npm 0.1.0 guidance');
   assert(!releaseWorkflow.includes('protocol_archive=ppgp-v0.1.zip'), 'release workflow must not regenerate a stale protocol-version alias');
+  assert(!fs.existsSync(path.join(repo, 'dist')), 'generated release archives must not be tracked under dist/');
 
   assert(!pkg.files.includes('.agents/'), 'platform adapters must not silently change npm package contents');
   assert(!pkg.files.includes('.claude-plugin/'), 'Claude adapter must not silently change npm package contents');
