@@ -1,20 +1,19 @@
 # Portable Persistent Goal Protocol (PPGP)
 
-> Portable continuity protocol for long-running coding agents.
+> Open, vendor-neutral continuity protocol for coding agents: persistent goals, recoverable state, verified work, clean handoffs.
 
-**Status:** Experimental v0.1.2  
-**First public release:** 2026-08-24  
-**Current release:** 2026-08-26  
-**License:** MIT  
-**Maturity:** Provisional
+**Source version:** v0.1.3 (this tree; see `package.json`)  
+**Latest published release:** [GitHub Releases](https://github.com/Fatboy-coder/ppgp/releases/latest) · [npm](https://www.npmjs.com/package/@fatboy-coder/ppgp)  
+**Status:** experimental, maintainer-tested, adversarially exercised under documented scenarios  
+**License:** MIT
 
-PPGP is an open, vendor-neutral continuity protocol for long-running AI coding agents and agentic software workflows. It keeps active software goals recoverable across context compaction, interrupted sessions, agent replacement and different coding-agent products.
+## What it is
 
-It does not replace model memory, Git, tests, MCP or provider-specific compaction. It defines a small control protocol around them.
+Long-running coding agents lose their working context: sessions end, context is compacted, one agent replaces another. PPGP keeps the minimum state a fresh agent needs in repository-visible files, so work resumes from the repository instead of from a human retelling the story.
 
-**[Try with npm](https://www.npmjs.com/package/@fatboy-coder/ppgp)** · **[Download PPGP v0.1.2](https://github.com/Fatboy-coder/ppgp/releases/latest/download/ppgp-v0.1.2.zip)** · **[Read the specification](./SPEC.md)** · **[Platform compatibility](./COMPATIBILITY.md)** · **[Run an evaluation](./EVALUATION.md)** · **[Cite PPGP](./CITATION.cff)**
+It does not replace model memory, Git, tests or MCP. It is a small control protocol around them: one `ACTIVE_GOAL` state with thirteen fields (the reference CLI stores it in `docs/ACTIVE_GOAL.md`), a goal lifecycle, an inner verify-and-record loop, and rules for evidence, blockers, handoff and closure.
 
-## Try PPGP in 30 seconds
+## Try it
 
 Inside any Git repository:
 
@@ -22,49 +21,18 @@ Inside any Git repository:
 npx @fatboy-coder/ppgp init
 npx @fatboy-coder/ppgp goal "Ship one verified milestone"
 npx @fatboy-coder/ppgp status
-```
-
-PPGP keeps the active goal, verified state, frozen decisions, blockers and next executable action recoverable in repository-visible state so a fresh coding agent can resume with less human reconstruction.
-
-For a quick environment check:
-
-```bash
 npx @fatboy-coder/ppgp doctor
 ```
 
-## What PPGP keeps recoverable
+`goal` scaffolds `docs/ACTIVE_GOAL.md`; `status` and `handoff` read it back; `doctor` checks the repository. The CLI is a deterministic helper. `distill` and `close` are agent-performed protocol operations because they require judgement.
 
-A coding agent should be able to recover the minimum operational state needed to continue useful work:
+Install the Agent Skill into an Agent Skills-compatible client:
 
-- the current goal;
-- frozen decisions;
-- verified state;
-- remaining work;
-- real blockers;
-- durable lessons;
-- the next executable action.
+```bash
+npx skills add https://github.com/Fatboy-coder/ppgp/tree/main/skills/ppgp
+```
 
-## Start here
-
-| Goal | Resource |
-| --- | --- |
-| Try the public npm CLI | `npx @fatboy-coder/ppgp init` |
-| Download the installable skill | [`ppgp-v0.1.2.zip`](https://github.com/Fatboy-coder/ppgp/releases/latest/download/ppgp-v0.1.2.zip) |
-| Install with Agent Skills CLI | `npx skills add https://github.com/Fatboy-coder/ppgp/tree/main/skills/ppgp` |
-| Install through a native agent platform | [`COMPATIBILITY.md`](./COMPATIBILITY.md) |
-| Understand the protocol | [`SPEC.md`](./SPEC.md) |
-| Run an evaluation | [`EVALUATION.md`](./EVALUATION.md) |
-| Review distribution channels | [`DISTRIBUTION.md`](./DISTRIBUTION.md) |
-| Report a recovery failure | [Open an issue](../../issues/new/choose) |
-| Contribute | [`CONTRIBUTING.md`](./CONTRIBUTING.md) |
-| Cite PPGP | [`CITATION.cff`](./CITATION.cff) |
-| Review release history | [`CHANGELOG.md`](./CHANGELOG.md) |
-
-## Why
-
-Long-running coding agents commonly lose efficiency when they must repeatedly reconstruct operational context after context compaction, interrupted sessions, handoffs or agent replacement.
-
-PPGP externalizes only the minimum useful state and treats conversation history as disposable cache.
+Manual install: open the [latest GitHub Release](https://github.com/Fatboy-coder/ppgp/releases/latest), download its versioned `ppgp-v*.zip`, and copy the `ppgp` directory into your client's skills location. Platform-specific routes (Claude, Codex, Gemini, Cursor, Copilot and others) are in [`docs/COMPATIBILITY.md`](./docs/COMPATIBILITY.md).
 
 ## Core model
 
@@ -78,191 +46,53 @@ THINK -> FREEZE -> EXECUTE -> HARDEN -> SHIP -> DISTILL -> CLOSED
               RETRIEVE -> ACT -> VERIFY -> DELTA
 ```
 
-Logical memory layers:
-
 ```text
 CONSTITUTION   long-lived authority and constraints
-ROADMAP        project direction and goal scheduling
+ROADMAP        project direction, deferred goals
 MEMORY         durable decisions, invariants and lessons
-ACTIVE_GOAL    temporary working memory for one goal
+ACTIVE_GOAL    temporary working memory for exactly one goal
 GIT            forensic history and implementation evidence
 ```
 
-`ACTIVE_GOAL` is temporary. At goal closure, durable information is distilled into persistent memory and the temporary goal state is deleted.
+`ACTIVE_GOAL` is conformant when all thirteen fields of [SPEC §3.4](./SPEC.md) are present. The CLI is tolerant about how they are written (header level, bold, `KEY:` lines) and strict about which are missing: exit `0` conformant, `2` partial, `1` malformed or missing. Prepared is not done; started is not done; agent confidence is not evidence.
 
-## Design principles
+The protocol is [`SPEC.md`](./SPEC.md). The compact agent-facing reference is [`skills/ppgp/references/PPGP.md`](./skills/ppgp/references/PPGP.md).
 
-- Retrieve relevant memory instead of preloading the whole history.
-- Prefer current verified state over chronological diaries.
-- Communicate deltas instead of repeating full summaries.
-- Treat tests and production evidence as stronger than agent confidence.
-- Keep human escalation for genuine authority boundaries.
-- Use additional agents only when expected information gain exceeds coordination cost.
-- Keep the protocol readable by humans and portable between model vendors.
-- Do not require vector databases, embeddings, MCP, a specific model or a specific IDE.
+## Versions
 
-## Install
+- **Source version** is the `version` in `package.json`, mirrored in `SPEC.md`, the skill metadata and `CITATION.cff`. It identifies this tree, released or not.
+- **Published versions** are only what [GitHub Releases](https://github.com/Fatboy-coder/ppgp/releases) and [npm](https://www.npmjs.com/package/@fatboy-coder/ppgp) actually list, with their dates. The source tree never records publication state, so a tagged tree never goes stale.
+- `0.x` releases are experimental and may change incompatibly. Cite the exact version you evaluated.
 
-PPGP v0.1.2 ships as an [Agent Skills](https://agentskills.io/) compatible skill, as a dependency-free Node.js CLI published on npm, and through thin native distribution adapters for major coding-agent ecosystems.
+What comes next is in [`ROADMAP.md`](./ROADMAP.md).
 
-### Universal Agent Skills route
+## Evidence and research
 
-```bash
-npx skills add https://github.com/Fatboy-coder/ppgp/tree/main/skills/ppgp
-```
+PPGP does not claim to invent agent memory, outperform other systems, reduce tokens by a fixed percentage or eliminate human review. Its claims are narrow and meant to be falsified:
 
-`skills/ppgp/` is the canonical PPGP Agent Skill source.
+- [`docs/EVALUATION.md`](./docs/EVALUATION.md) — how to evaluate PPGP and what to record.
+- [`benchmarks/`](./benchmarks/) — paired A/B recovery protocol, result schema, deterministic pilot fixture.
+- [`research/`](./research/) — dated, non-normative validation records, including the 2026-09-23 adversarial validation of v0.1.2.
 
-### Native platform routes
+Recovery failures, overhead reports and negative results are welcome through the [issue forms](../../issues/new/choose).
 
-| Platform | Route |
-| --- | --- |
-| Claude Code | Plugins → Add marketplace → `Fatboy-coder/ppgp` → install `ppgp` |
-| OpenAI Codex | `.codex-plugin/plugin.json` + repo marketplace metadata |
-| ChatGPT | Agent Skill / skill-only OpenAI plugin; public directory listing requires external publication |
-| Gemini CLI | `gemini extensions install https://github.com/Fatboy-coder/ppgp --auto-update` |
-| Cursor | root Agent Plugin `plugin.json` + canonical `skills/` |
-| GitHub Copilot | repository-native `.agents/skills/ppgp/` discovery |
-| Windsurf | repository-native `.agents/skills/ppgp/` discovery |
-| Devin | repository-native `.agents/skills/ppgp/` discovery |
-| Kiro / Cline / Junie | import the canonical public Agent Skill |
-
-See [`COMPATIBILITY.md`](./COMPATIBILITY.md) for verification level, limitations and remaining marketplace actions. Repository readiness is not presented as vendor approval or public listing.
-
-### PPGP CLI
-
-The canonical public npm package is `@fatboy-coder/ppgp`:
-
-```bash
-npx @fatboy-coder/ppgp init
-npx @fatboy-coder/ppgp doctor
-npx @fatboy-coder/ppgp goal "Ship the next verified milestone"
-npx @fatboy-coder/ppgp status
-npx @fatboy-coder/ppgp handoff
-```
-
-For repeated use, install it globally and keep the short `ppgp` executable:
-
-```bash
-npm install -g @fatboy-coder/ppgp
-ppgp init
-```
-
-The CLI is deliberately deterministic. It helps inspect, scaffold and recover repository-visible state without pretending to replace agent reasoning, verification, distillation or closure checks.
-
-### Manual install
-
-Download the current release archive from [`ppgp-v0.1.2.zip`](https://github.com/Fatboy-coder/ppgp/releases/latest/download/ppgp-v0.1.2.zip), extract it, then copy or upload the `ppgp` skill directory into a client that implements the Agent Skills standard.
-
-The repository also keeps the canonical source under [`skills/ppgp/`](./skills/ppgp/) for inspection and development.
-
-For clients that natively discover `.agents/skills/`, PPGP commits a generated compatibility mirror at `.agents/skills/ppgp/`. Automated tests enforce byte-for-byte parity with the canonical skill.
-
-### Read without installing
-
-Read [`SPEC.md`](./SPEC.md) for the protocol itself.
-
-The skill contains a compact operational reference in [`skills/ppgp/references/PPGP.md`](./skills/ppgp/references/PPGP.md).
-
-## Operations
-
-The Agent Skill exposes six workflow intents:
+## Repository map
 
 ```text
-ppgp init
-ppgp goal
-ppgp status
-ppgp handoff
-ppgp distill
-ppgp close
+SPEC.md                 the protocol (normative)
+skills/ppgp/            canonical Agent Skill; .agents/ and plugins/ are drift-tested mirrors
+bin/ppgp.js             dependency-free CLI helper
+test/                   regression suite and fixtures
+benchmarks/             evaluation protocol, schema, pilot fixture
+docs/                   compatibility, distribution, evaluation guide; ACTIVE_GOAL.md while a goal is open
+research/               dated evidence records
+CHANGELOG.md ROADMAP.md CONTRIBUTING.md CITATION.cff
 ```
 
-The CLI currently implements deterministic helpers for `init`, `doctor`, `goal`, `status`, `handoff`, `skill-path`, and `install-skill`.
+Machine manifests at the root (`plugin.json`, `gemini-extension.json`, `.claude-plugin/`, `.codex-plugin/`) exist for agent platforms and need no reading.
 
-These are protocol operations, not assumptions about a vendor-specific slash-command system.
+## Contributing and citing
 
-## Distribution
+[`CONTRIBUTING.md`](./CONTRIBUTING.md) covers tests, the CLI, mirror synchronization, the self-hosting rule and releases. Cite with [`CITATION.cff`](./CITATION.cff), naming the exact version.
 
-PPGP uses multiple distribution surfaces on purpose:
-
-```text
-Canonical Agent Skill      -> vendor-neutral source of truth
-Claude Plugin/Marketplace  -> native Claude discovery
-OpenAI Plugin              -> Codex / OpenAI plugin packaging
-Gemini Extension           -> Gemini CLI installation
-Agent Plugin               -> Cursor and compatible clients
-.agents/skills mirror      -> Copilot / Windsurf / Devin discovery
-GitHub Release             -> direct download
-npmjs.com                  -> public CLI discovery and zero-install execution
-GitHub Packages            -> package presence inside GitHub
-```
-
-The canonical npm package name is `@fatboy-coder/ppgp`.
-
-Platform adapters do not fork PPGP semantics. Current release metadata is kept on the same semantic version across the specification, CLI package, citation metadata and versioned adapters.
-
-See [`DISTRIBUTION.md`](./DISTRIBUTION.md) for package names, manifests, version mapping and publication security.
-
-## Research and evaluation
-
-PPGP is experimental.
-
-Independent evaluation, replication, criticism, alternative implementations and failure reports are welcome.
-
-If you evaluate PPGP in research, production or comparative agent testing, identify the exact PPGP version used and publish enough methodology for the result to be independently interpreted.
-
-The reproducible evaluation guide is in [`EVALUATION.md`](./EVALUATION.md). The repository also provides structured issue forms for recovery failures and evaluation reports.
-
-Especially useful evidence includes:
-
-- whether a fresh agent can recover an active goal without human reconstruction;
-- recovery failures and ambiguous state;
-- documentation overhead created by the protocol;
-- unnecessary human escalations;
-- stale or contradictory memory;
-- cross-agent or cross-provider incompatibilities;
-- smaller representations that preserve recovery quality;
-- measured results from small, large, legacy or multi-agent repositories.
-
-Negative results are useful. PPGP should change when reproducible evidence shows that a simpler or more reliable rule exists.
-
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
-
-## Citation
-
-Citation metadata is provided in [`CITATION.cff`](./CITATION.cff).
-
-Version-specific citation is strongly preferred. The public GitHub handle is used as the author identifier until real-name citation metadata is added.
-
-## What v0.1.2 deliberately does not claim
-
-PPGP v0.1.2 does **not** claim to:
-
-- invent persistent agent memory;
-- outperform existing memory systems;
-- be optimal for every repository;
-- reduce tokens by a specific percentage;
-- eliminate human review;
-- make multi-agent systems inherently better.
-
-The purpose of the public v0.1.2 release is to make the protocol inspectable, reproducible and falsifiable.
-
-## Project mission
-
-PPGP is a community-oriented open-source project intended to help developers and users get more reliable work from coding agents with less repeated explanation and avoidable supervision.
-
-The project may be used commercially under the MIT license. The community-oriented mission is not a restriction on who may use the protocol.
-
-## Publication history
-
-PPGP v0.1 was first published publicly on 2026-08-24 in the `Fatboy-coder/fatboy-coder` repository under `/ppgp`.
-
-The current release is PPGP v0.1.2. This repository is now the canonical home of the protocol. The original Git history remains the first public record of the initial v0.1 release.
-
-## Versioning
-
-PPGP uses semantic versions for the current protocol and its versioned distribution artifacts.
-
-`0.x` releases are experimental and may change incompatibly.
-
-Researchers, developers and maintainers should cite the exact version evaluated.
+PPGP was first published on 2026-08-24 in the `Fatboy-coder/fatboy-coder` repository under `/ppgp`; this repository is its canonical home. It is an independent open-source project, not affiliated with or endorsed by any agent vendor.

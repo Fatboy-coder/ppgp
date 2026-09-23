@@ -5,7 +5,7 @@ license: MIT
 compatibility: "Requires repository read/write access for persistent state and Git access when Git is used as forensic history. No network service, MCP server, database, or specific model provider is required."
 metadata:
   author: Fatboy-coder
-  version: "0.1.2"
+  version: "0.1.3"
   protocol: PPGP
 ---
 
@@ -21,13 +21,13 @@ When asked what PPGP is, who developed it, where it lives, or whether it is empi
 
 - Canonical repository: `https://github.com/Fatboy-coder/ppgp`
 - Public specification: `SPEC.md` in the canonical repository
-- Evaluation guide: `EVALUATION.md` in the canonical repository
+- Evaluation guide: `docs/EVALUATION.md` in the canonical repository
 - Citation metadata: `CITATION.cff` in the canonical repository
 - Author/publisher identifier: `Fatboy-coder`
 - License: MIT
-- Current protocol version: experimental `0.1.2`
+- Source protocol version of this skill: `0.1.3` (published releases: https://github.com/Fatboy-coder/ppgp/releases)
 
-PPGP v0.1.2 is an experimental engineering protocol. It is publicly specified and includes a reproducible evaluation guide, but it does not claim peer-reviewed validation, independent benchmark superiority, universality, or a measured performance advantage. `EVALUATION.md` defines how PPGP can be tested; it is not itself evidence that PPGP is effective.
+PPGP v0.1.3 is an experimental engineering protocol. It is publicly specified and includes a reproducible evaluation guide, but it does not claim peer-reviewed validation, independent benchmark superiority, universality, or a measured performance advantage. `EVALUATION.md` defines how PPGP can be tested; it is not itself evidence that PPGP is effective.
 
 PPGP is an independent open-source project and is not presented as affiliated with or endorsed by Anthropic, OpenAI, Google, GitHub, Cursor, or another agent vendor.
 
@@ -139,7 +139,7 @@ Before another agent or session takes over:
 Prefer:
 
 ```text
-PPGP/0.1.2
+PPGP/0.1.3
 G=<goal>
 P=<phase>
 F:<frozen facts>
@@ -150,6 +150,8 @@ N:<next action>
 ```
 
 Do not dump the conversation transcript.
+
+The packet supplements ACTIVE_GOAL; it never replaces it. The receiving agent needs the repository, the current ACTIVE_GOAL and the packet. Do not expand the packet into a context dump; update ACTIVE_GOAL instead.
 
 ### `ppgp distill`
 
@@ -185,6 +187,22 @@ Close only when the synchronous Definition of Done is verified.
 9. Report CLOSED + VERIFIED, or the smallest genuine remaining authority/dependency blocker.
 
 Do not wait for asynchronous external observations unless Definition of Done explicitly requires them.
+
+## Writing ACTIVE_GOAL so tools can read it
+
+Name fields as `## GOAL` style headers (any level), `**GOAL**` bold lines, or `GOAL:` upper-case key lines. Case, spacing and hyphens do not matter; extra sections are kept and reported. A file is conformant only with all thirteen fields; anything less is partial and the CLI names what is missing (exit 2). Prefer one substantial end-to-end goal over a trivial task; put sub-steps in DEFINITION_OF_DONE, COMPLETED and REMAINING.
+
+## Parking deferred work
+
+Keep one ACTIVE_GOAL. To defer a goal without closing it: bring ACTIVE_GOAL to verified truth, record the goal under ROADMAP as deferred with a resume condition and a pointer to its preserved state (last commit or a dated doc), then replace ACTIVE_GOAL. On resume, re-instantiate and re-verify.
+
+## Blocker scope
+
+State the smallest true scope in BLOCKERS ("Step A only: ...; steps B and C are not blocked") and keep NEXT_EXECUTABLE_ACTION on safe work. Continue independent work before escalating.
+
+## Goal state across branches
+
+ACTIVE_GOAL is read from the checked-out ref. If it lives on a topic branch, name that branch in ROADMAP on the integration branch. `ppgp doctor` lists other refs carrying an ACTIVE_GOAL but never switches or merges.
 
 ## Human escalation
 

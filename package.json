@@ -1,6 +1,6 @@
 {
   "name": "@fatboy-coder/ppgp",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Portable Persistent Goal Protocol CLI and Agent Skill for long-running coding-agent continuity.",
   "license": "MIT",
   "author": "Hervey (Fatboy-coder)",
@@ -33,8 +33,7 @@
     "scripts/prepare-pilot-01.js",
     "benchmarks/",
     "SPEC.md",
-    "EVALUATION.md",
-    "BENCHMARK_PROTOCOL.md",
+    "docs/EVALUATION.md",
     "CITATION.cff",
     "LICENSE",
     "README.md"
@@ -43,7 +42,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node test/cli.test.js && node test/benchmark.test.js && node test/package.test.js",
+    "test": "node test/cli.test.js && node test/hardening.test.js && node test/benchmark.test.js && node test/package.test.js",
     "benchmark:report": "node scripts/benchmark-report.js",
     "benchmark:prepare:pilot-01": "node scripts/prepare-pilot-01.js",
     "prepublishOnly": "npm test"

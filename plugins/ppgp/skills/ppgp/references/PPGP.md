@@ -1,4 +1,4 @@
-# PPGP v0.1.2 Compact Reference
+# PPGP v0.1.3 Compact Reference
 
 ## Objective
 
@@ -52,6 +52,8 @@ NEXT_EXECUTABLE_ACTION
 
 Write current state, not a diary.
 
+All thirteen fields present = conformant. Fewer = partial; tools name the missing fields. Fields may be headers, bold lines or `KEY:` lines.
+
 ## Recovery
 
 Load the smallest sufficient boot packet:
@@ -74,6 +76,16 @@ C authority boundary    -> escalate minimally
 D hard dependency       -> escalate if no safe autonomous path
 ```
 
+Scope blockers to the smallest true step in prose; continue unblocked work.
+
+## Parking
+
+One ACTIVE_GOAL. Defer a goal by recording it under ROADMAP with a resume condition and a pointer to its preserved state, then replace ACTIVE_GOAL. Re-verify on resume.
+
+## Refs
+
+ACTIVE_GOAL is read from the checked-out ref. Name a topic-branch goal in ROADMAP on the integration branch.
+
 ## Evidence
 
 Default technical precedence:
@@ -93,6 +105,8 @@ runtime/production
 ## Handoff
 
 Prefer deltas and compact structured state over transcript replay.
+
+The packet supplements ACTIVE_GOAL; it never replaces it. Receiver needs repository + ACTIVE_GOAL + packet.
 
 Keep the handoff human-auditable and cross-model readable.
 
